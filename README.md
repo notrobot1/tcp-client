@@ -1,2 +1,2 @@
 # tcp-client
-Для компиляции использую  .\file.cpp -o test.exe -lws2_32
+Для компиляции использую  .\main.cpp -o test.exe -lws2_32
