@@ -1,7 +1,8 @@
-#pragma comment(lib, "ws2_32.lib")
-#pragma warning(disable:4996)
 #include <winsock2.h>
 #include <iostream>
+#include <Windows.h>
+#pragma comment(lib, "ws2_32.lib")
+#pragma warning(disable:4996)
 
 int main(int argc, char* argv[]) {
     WSAData wsaData;
@@ -18,7 +19,7 @@ int main(int argc, char* argv[]) {
      addr.sin_family = AF_INET;
 
 
-     SOCKET Connection = socket(AF_INET, SOCK_STREAM, NULL);
+     SOCKET Connection = socket(AF_INET, SOCK_STREAM, 0);
 
      if (connect(Connection, (SOCKADDR*)&addr, sizeof(addr)) != 0) {
          std::cout << "Error: failed connect to server.\n";
@@ -27,11 +28,21 @@ int main(int argc, char* argv[]) {
      std::cout << "Connected!\n";
      char msg[256];
      char m[256] = "tilox";
-     send(Connection, m, sizeof(m), NULL);
+     send(Connection, m, sizeof(m), 0);
 
      while (1) {
-         recv(Connection, msg, sizeof(msg), NULL);
-         std::cout << msg << std::endl;
+
+         ssize_t count = recv(Connection, msg, sizeof(msg), 0);
+
+         if (count==0) {
+                break;
+         } else if (count < 0) {
+             std::cerr << "recv() failed" << std::endl;
+             exit(EXIT_FAILURE);
+             }
+             msg[count] = 0;
+             std::cout << msg << std::endl;
+         //std::cout << recv(Connection, msg, sizeof(msg)-1, 0) << std::endl;
      }
      //std::cout << "Hello World!" << std::endl;
     return 0;
